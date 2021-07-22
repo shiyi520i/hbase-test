@@ -1,7 +1,6 @@
 package com.example.test.utils;
 
 import com.example.test.gecco.JDGoodList;
-import com.example.test.moudel.MovieDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.Cell;

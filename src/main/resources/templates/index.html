@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>搜索引擎</title>
+    <link rel="stylesheet" href="../static/homeassets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
+    <link rel="stylesheet" href="../static/homeassets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="../static/homeassets/css/Footer-Basic.css">
+    <link rel="stylesheet" href="../static/homeassets/css/Footer-Dark.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="../static/homeassets/css/Navigation-Clean.css">
+</head>
+
+<body id="page-top">
+<div id="wrapper">
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+            <div class="container-fluid col-12">
+                <h3 class="text-dark text-lg-center" style="margin-top: 30px;">我的搜索引擎</h3>
+                <div class="card shadow">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="text-lg-center dataTables_filter" id="dataTable_filter"><label><input id="name" type="search" name="name" class="form-control" aria-controls="dataTable" placeholder="片名/导演/编剧"></label><button id="findByName" type="button" class="btn btn-primary">查询</button></div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                            <table class="table my-0" id="table">
+                                <thead>
+                                <tr>
+                                    <th>商品编码</th>
+                                    <th>商品标题</th>
+                                    <th>价格</th>
+                                    <th>商品图片</th>
+                                    <th>评价人数</th>
+                                    <th>好评率</th>
+                                    <th>详情</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot>
+                                <tr></tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 align-self-center">
+                                <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">45215</p>
+                            </div>
+                            <div class="col-md-6">
+                                <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                                    <ul class="pagination">
+                                        <li id="li1" class="page-item active"><input type="button" class="page-link" value="1"></li>
+                                        <li id="li2" class="page-item "><input type="button" class="page-link" value="2"></li>
+                                        <li id="li3" class="page-item "><input type="button" class="page-link" value="3"></li>
+                                        &nbsp;&nbsp;&nbsp;
+                                        <li class="page-item "> <label><input id="page" type="search" class="form-control" aria-controls="dataTable" placeholder="页数"></label><button  id="findByPage" type="button" class="btn btn-primary ">跳转</button></li>
+
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="bg-white sticky-footer" data-bs-hover-animate="bounce">
+            <div class="container my-auto">
+                <div class="text-center my-auto copyright"><span>Copyright © 18软1叶本国团队 2021</span></div>
+            </div>
+        </footer>
+    </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a></div>
+<script src="../static/homeassets/js/jquery.min.js"></script>
+<script>
+    var goodlist = null
+    var pageNo = 0
+    var msg = ""
+    $(function () {
+
+        init(pageNo)
+        //按钮根据页数更新页面
+        $(".page-link").on('click',function (){
+            // console.log($(this).val())
+            pageNo = $(this).val()
+            if (pageNo==="1"){
+                $("#li1").addClass("active")
+                $("#li2").removeClass("active")
+                $("#li3").removeClass("active")
+            }else if (pageNo==="2"){
+                $("#li1").removeClass("active")
+                $("#li2").addClass("active")
+                $("#li3").removeClass("active")
+            }else {
+                $("#li1").removeClass("active")
+                $("#li2").removeClass("active")
+                $("#li3").addClass("active")
+            }
+            init(pageNo-1)
+            console.log(pageNo-1)
+            console.log(goodlist)
+        })
+
+        //按钮根据输入的页数更新页面
+        $("#findByPage").on('click',function (){
+            // console.log($("#page").val())
+            // var pageSize = $("#pageSize").val()
+            pageNo = $("#page").val()
+            init(pageNo-1)
+            $("#page").val("")
+            $("#li1").addClass("active")
+            $("#li2").removeClass("active")
+            $("#li3").removeClass("active")
+        })
+
+
+        //根据用户名查询
+        $('#findByName').on('click',function () {
+            var key = $('#name').val()
+
+            if (key===""){
+                alert("用户名不能为空！")
+                return ;
+            }
+
+            $('#table').empty()
+            $('#table').append("                                <tr>\n" +
+                "                                    <th>商品编码</th>\n" +
+                "                                    <th>商品标题</th>\n" +
+                "                                    <th>商品价格</th>\n" +
+                "                                    <th>商品图片</th>\n" +
+                "                                    <th>评价人数</th>\n" +
+                "                                    <th>好评率</th>\n" +
+                "                                    <th>详情</th>\n" +
+                "                                </tr>")
+
+
+
+            $.ajax({
+                url: "/getByName",
+                type: "get",
+                dataType: "json",
+                async: false,
+                data: {
+                    key:key
+                },
+                success:function (data){
+                    if (data!=null){
+                        goodlist = data
+                    }else {
+                        alert("没有相关数据！")
+                    }
+                }
+            })
+            if (goodlist.length <0){
+                console.log("0")
+                return
+            }else if (goodlist.length>=10){
+                for (var i=0;i<10;i++){
+                    $('#table').append("                                    <tr>\n" +
+                        "                                        <td>"+goodlist[i].code+"</td>\n" +
+                        "                                        <td>"+goodlist[i].title+"</td>\n" +
+                        "                                        <td>"+goodlist[i].price+"</td>\n" +
+                        "                                        <td>"+goodlist[i].image+"</td>\n" +
+                        "                                        <td>"+goodlist[i].number+"</td>\n" +
+                        "                                        <td>"+goodlist[i].goodrate+"</td>\n" +
+                        "                                        <td>"+"<a href=\" " + goodlist[i].url+"\" target=\"_blank\" rel=\"noopener noreferrer\">详情</a>" +"</td>\n" +
+                        "                                    </tr>")
+                }
+            }
+            else {
+                for (var i=0;i<goodlist.length;i++){
+                    $('#table').append("                                    <tr>\n" +
+                        "                                        <td>"+goodlist[i].code+"</td>\n" +
+                        "                                        <td>"+goodlist[i].title+"</td>\n" +
+                        "                                        <td>"+goodlist[i].price+"</td>\n" +
+                        "                                        <td>"+goodlist[i].image+"</td>\n" +
+                        "                                        <td>"+goodlist[i].number+"</td>\n" +
+                        "                                        <td>"+goodlist[i].goodrate+"</td>\n" +
+                        "                                        <td>"+"<a href=\" " + goodlist[i].url+"\" target=\"_blank\" rel=\"noopener noreferrer\">详情</a>" +"</td>\n" +
+                        "                                    </tr>")
+                }
+            }
+            $("#li1").addClass("active")
+            $("#li2").removeClass("active")
+            $("#li3").removeClass("active")
+            pageNo = 0
+            var l = parseInt(goodlist.length/10)+1
+            msg = "第 "+parseInt(pageNo + 1)+" 页 共"+l+" 页"
+            $('#dataTable_info').text(msg)
+        })
+
+    //初始化与刷新
+    function init(mPageNo) {
+        $('#table').empty()
+        $('#table').append("                                <tr>\n" +
+            "                                    <th>商品编码</th>\n" +
+            "                                    <th>商品标题</th>\n" +
+            "                                    <th>商品价格</th>\n" +
+            "                                    <th>商品图片</th>\n" +
+            "                                    <th>评价人数</th>\n" +
+            "                                    <th>好评率</th>\n" +
+            "                                    <th>详情</th>\n" +
+            "                                </tr>")
+
+        if(goodlist===null){
+            $.ajax({
+                url: "/getAll",
+                type: "get",
+                dataType: "json",
+                async: false,
+                data: {
+                },
+                success:function (data){
+                    if (data!=null){
+                        goodlist = data
+                    }else {
+                        alert("没有相关数据！")
+                    }
+                }
+            })
+        }
+
+        if (goodlist.length - mPageNo*10 <0){
+            var l = parseInt(goodlist.length/10)+1
+            msg = "第 "+parseInt(mPageNo + 1)+" 页 共"+l+" 页"
+            $('#dataTable_info').text(msg)
+            return
+        }else if (goodlist.length - mPageNo*10>=10){
+            pageNo = mPageNo
+            for (var i=pageNo*10;i<mPageNo*10+10;i++){
+                $('#table').append("                                    <tr>\n" +
+                    "                                        <td>"+goodlist[i].code+"</td>\n" +
+                    "                                        <td>"+goodlist[i].title+"</td>\n" +
+                    "                                        <td>"+goodlist[i].price+"</td>\n" +
+                    "                                        <td>"+goodlist[i].image+"</td>\n" +
+                    "                                        <td>"+goodlist[i].number+"</td>\n" +
+                    "                                        <td>"+goodlist[i].goodrate+"</td>\n" +
+                    "                                        <td>"+"<a href=\" " + goodlist[i].url+"\" target=\"_blank\" rel=\"noopener noreferrer\">详情</a>" +"</td>\n" +
+                    "                                    </tr>")
+                }
+            }
+         else {
+             pageNo = mPageNo
+            for (var i=mPageNo*10;i<goodlist.length;i++){
+                $('#table').append("                                    <tr>\n" +
+                    "                                        <td>"+goodlist[i].code+"</td>\n" +
+                    "                                        <td>"+goodlist[i].title+"</td>\n" +
+                    "                                        <td>"+goodlist[i].price+"</td>\n" +
+                    "                                        <td>"+goodlist[i].image+"</td>\n" +
+                    "                                        <td>"+goodlist[i].number+"</td>\n" +
+                    "                                        <td>"+goodlist[i].goodrate+"</td>\n" +
+                    "                                        <td>"+"<a href=\" " + goodlist[i].url+"\" target=\"_blank\" rel=\"noopener noreferrer\">详情</a>" +"</td>\n" +
+                    "                                    </tr>")
+            }
+        }
+         var l = parseInt(goodlist.length/10)+1
+         msg = "第 "+parseInt(mPageNo + 1)+" 页 共"+l+" 页"
+         $('#dataTable_info').text(msg)
+        }
+    })
+
+</script>
+<script src="../static/homeassets/bootstrap/js/bootstrap.min.js"></script>
+<script src="../static/homeassets/js/chart.min.js"></script>
+<script src="../static/homeassets/js/bs-init.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
+<script src="../static/homeassets/js/theme.js"></script>
+</body>
+
+</html>

@@ -2,23 +2,17 @@ package com.example.test.utils;
 
 
 import com.example.test.gecco.JDGoodList;
+import com.example.test.gecco.JDPrice;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.NamespaceDescriptor;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
-import org.apache.hadoop.hbase.filter.Filter;
-import org.apache.hadoop.hbase.filter.QualifierFilter;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +45,40 @@ public class HBaseTemplate {
 
     private Admin getAdmin() throws IOException {
         return connection.getAdmin();
+    }
+
+
+    //扫描表
+    public  List<JDGoodList> scanData(String tab) throws IOException {
+        //电影列表
+        List<JDGoodList> movies = new ArrayList<>();
+        //获取连接
+        //获取表
+        Table table = connection.getTable(TableName.valueOf(tab));
+        //获取scan,可使用过滤器
+     /* Scan scan = new Scan();
+       RegexStringComparator comp = new RegexStringComparator("you."); // 以 you 开头的字符串
+       SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("family"), Bytes.toBytes("qualifier"), CompareOp.EQUAL, comp);
+       scan.setFilter(filter);*/
+        Scan scan = new Scan();
+        //扫描全表
+        ResultScanner scanner = table.getScanner(scan);
+        //解析scanner
+        for (Result result : scanner) {
+            //电影实体
+            JDGoodList jdGoodList = new JDGoodList();
+            JDPrice jp=new JDPrice();
+            jdGoodList.setCode(Bytes.toString(CellUtil.cloneValue(result.rawCells()[0])));
+            jdGoodList.setTitle(Bytes.toString(CellUtil.cloneValue(result.rawCells()[1])));
+      /*      jp.setPrice(Bytes.toString(CellUtil.cloneValue(result.rawCells()[2])));
+            jdGoodList.setPrice(jp);
+            jdGoodList.setTitle(Bytes.toString(CellUtil.cloneValue(result.rawCells()[3])));
+            jdGoodList.setImage(Bytes.toString(CellUtil.cloneValue(result.rawCells()[4])));
+            jdGoodList.setNumber("https://movie.douban.com/subject/"+Bytes.toString(CellUtil.cloneValue(result.rawCells()[5]))+"/");
+            jdGoodList.setGoodrate(Bytes.toString(CellUtil.cloneValue(result.rawCells()[6])));*/
+            movies.add(jdGoodList);
+        }
+        return movies;
     }
 
     public void setConnection(Connection connection) {
@@ -272,7 +300,6 @@ public class HBaseTemplate {
         }
         return rowData;
     }
-
 
     /**
      * 获取单行数据

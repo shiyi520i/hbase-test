@@ -5,18 +5,30 @@ package com.example.test.controller;
 import com.example.test.utils.HBaseTemplate;
 import com.geccocrawler.gecco.GeccoEngine;
 import com.geccocrawler.gecco.request.HttpGetRequest;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.RegionLocator;
+import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.client.TableDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 public class HbaseController {
     @Autowired
     private HBaseTemplate hBaseTemplate;
-    @GetMapping("getdata")
 
-    public void getData(){
-        System.out.println(hBaseTemplate.getRowData("jdgoodlist","13284888"));
+    @GetMapping("getdata")
+    public void getData()  {
+        Map<String,String> hmap=null;
+        hmap=hBaseTemplate.getRowData("jdgoodlist","12690647");
+        System.out.println(hmap);
 
     }
     @GetMapping("gecco")

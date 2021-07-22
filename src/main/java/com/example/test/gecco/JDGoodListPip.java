@@ -12,7 +12,9 @@ public class JDGoodListPip  implements Pipeline<JDGoodList> {
 
     @Override
     public void process(JDGoodList jdGoodList) {
-        new OptData().tPutData(jdGoodList);
+        /*System.out.println(jdGoodList.getComment().getGoodrate());
+        System.out.println(jdGoodList.getComment().getNumber());*/
+        //new OptData().tPutData(jdGoodList);
     }
 }
 

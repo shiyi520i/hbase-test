@@ -11,16 +11,16 @@ public class JDPrice implements JsonBean {
     private String code;
 
     @JSONPath("$.p[0]")
-    private float price;
+    private String price;
 
     @JSONPath("$.m[0]")
     private float srcPrice;
 
-    public float getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

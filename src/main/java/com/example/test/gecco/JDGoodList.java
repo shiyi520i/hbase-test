@@ -3,15 +3,21 @@ package com.example.test.gecco;
 
 import com.geccocrawler.gecco.annotation.*;
 import com.geccocrawler.gecco.spider.HtmlBean;
+import lombok.Data;
 
 
+/*
+* @date ${date}
+*
+* */
+@Data
 @Gecco(matchUrl="https://item.jd.com/{code}.html", pipelines={"consolePipeline","jdgoodlistpip"})
 public class JDGoodList implements HtmlBean {
-
-    private static final long serialVersionUID = -377053120283382723L;
+    private static final long serialVersionUID = 7474876333243181932L;
 
     /**
      * 商品代码
+     *
      */
     @RequestParameter
     private String code;
@@ -21,7 +27,6 @@ public class JDGoodList implements HtmlBean {
      */
 
     @Text
-    //@HtmlField(cssPath="#name > h1")
     @HtmlField(cssPath=".itemInfo-wrap > div.sku-name")
     private String title;
 
@@ -42,11 +47,10 @@ public class JDGoodList implements HtmlBean {
     private JDad jdAd;
 
     /*
-     * 商品规格参数
+     * 商品所在店铺
      */
 
-    //@HtmlField(cssPath="#product-detail-2")
-    @HtmlField(cssPath=".p-parameter > ul")
+    @HtmlField(cssPath=".p-parameter > ul > li:nth-child(1) > a")
     private String detail;
 
     /*
@@ -57,65 +61,13 @@ public class JDGoodList implements HtmlBean {
     @HtmlField(cssPath="#spec-img")
     private String image;
 
-    @Override
-    public String toString() {
-        return "JDGoodList{" +
-                "code='" + code + '\'' +
-                ", title='" + title + '\'' +
-                ", price='" + price + '\'' +
-                ", jdAd='" + jdAd + '\'' +
-                ", detail='" + detail + '\'' +
-                ", image='" + image + '\'' +
-                '}';
-    }
+    /**
+     * 评价人数,好评率(返回htmml？？？？？？？？？)
+     *
+     */
 
-    public JDPrice getPrice() {
-        return price;
-    }
-
-    public void setPrice(JDPrice price) {
-        this.price = price;
-    }
-
-    public JDad getJdAd() {
-        return jdAd;
-    }
-
-    public void setJdAd(JDad jdAd) {
-        this.jdAd = jdAd;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-
-    public String getDetail() {
-        return detail;
-    }
-
-    public void setDetail(String detail) {
-        this.detail = detail;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
+    @Ajax(url="https://club.jd.com/comment/productCommentSummaries.action?referenceIds=[code]")
+    //@Ajax(url="https://club.jd.com/comment/skuProductPageComments.action?productId={code}&score=0&sortType=5&page=0&pageSize=1&isShadowSku=0&fold=1")
+    private JDComment comment;
 
 }

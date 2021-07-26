@@ -23,7 +23,8 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="text-lg-center dataTables_filter" id="dataTable_filter"><label><input id="name" type="search" name="name" class="form-control" aria-controls="dataTable" placeholder="片名/导演/编剧"></label><button id="findByName" type="button" class="btn btn-primary">查询</button></div>
+                                <div class="text-lg-center dataTables_filter" id="dataTable_filter"><label><input id="name" type="search" name="name" class="form-control" aria-controls="dataTable" placeholder="商品名称/导演/编剧"></label><button id="findByName" type="button" class="btn btn-primary">查询</button></div>
+                                <div class="text-lg-center dataTables_filter" id="dataTable_filter1"><label><input id="seachname" type="search" name="name" class="form-control" aria-controls="dataTable" placeholder="商品名称"></label><button id="seachByName" type="button" class="btn btn-primary">搜索</button></div>
                             </div>
                         </div>
 
@@ -35,8 +36,6 @@
                                     <th>商品标题</th>
                                     <th>价格</th>
                                     <th>商品图片</th>
-                                    <th>评价人数</th>
-                                    <th>好评率</th>
                                     <th>详情</th>
                                 </tr>
                                 </thead>
@@ -132,8 +131,6 @@
                 "                                    <th>商品标题</th>\n" +
                 "                                    <th>商品价格</th>\n" +
                 "                                    <th>商品图片</th>\n" +
-                "                                    <th>评价人数</th>\n" +
-                "                                    <th>好评率</th>\n" +
                 "                                    <th>详情</th>\n" +
                 "                                </tr>")
 
@@ -163,11 +160,9 @@
                     $('#table').append("                                    <tr>\n" +
                         "                                        <td>"+goodlist[i].code+"</td>\n" +
                         "                                        <td>"+goodlist[i].title+"</td>\n" +
-                        "                                        <td>"+goodlist[i].price+"</td>\n" +
+                        "                                        <td>"+goodlist[i].price.price+"</td>\n" +
                         "                                        <td>"+goodlist[i].image+"</td>\n" +
-                        "                                        <td>"+goodlist[i].number+"</td>\n" +
-                        "                                        <td>"+goodlist[i].goodrate+"</td>\n" +
-                        "                                        <td>"+"<a href=\" " + goodlist[i].url+"\" target=\"_blank\" rel=\"noopener noreferrer\">详情</a>" +"</td>\n" +
+                        "                                        <td>"+"<a href=\" " + goodlist[i].goodurl+"\" target=\"_blank\" rel=\"noopener noreferrer\">详情</a>" +"</td>\n" +
                         "                                    </tr>")
                 }
             }
@@ -176,11 +171,9 @@
                     $('#table').append("                                    <tr>\n" +
                         "                                        <td>"+goodlist[i].code+"</td>\n" +
                         "                                        <td>"+goodlist[i].title+"</td>\n" +
-                        "                                        <td>"+goodlist[i].price+"</td>\n" +
+                        "                                        <td>"+goodlist[i].price.price+"</td>\n" +
                         "                                        <td>"+goodlist[i].image+"</td>\n" +
-                        "                                        <td>"+goodlist[i].number+"</td>\n" +
-                        "                                        <td>"+goodlist[i].goodrate+"</td>\n" +
-                        "                                        <td>"+"<a href=\" " + goodlist[i].url+"\" target=\"_blank\" rel=\"noopener noreferrer\">详情</a>" +"</td>\n" +
+                        "                                        <td>"+"<a href=\" " + goodlist[i].goodurl+"\" target=\"_blank\" rel=\"noopener noreferrer\">详情</a>" +"</td>\n" +
                         "                                    </tr>")
                 }
             }
@@ -193,7 +186,29 @@
             $('#dataTable_info').text(msg)
         })
 
-    //初始化与刷新
+        //爬取数据
+        $('#seachByName').on('click',function () {
+            var key = $('#seachname').val()
+            if (key===""){
+                alert("不能为空！")
+                return ;
+            }
+            $.ajax({
+                url: "/seachByName",
+                type: "get",
+                dataType: "json",
+                async: false,
+                data: {
+                    key:key
+                },
+                success:function (data){
+                    alert("成功！")
+                }
+            })
+        })
+
+
+        //初始化与刷新
     function init(mPageNo) {
         $('#table').empty()
         $('#table').append("                                <tr>\n" +
@@ -201,8 +216,6 @@
             "                                    <th>商品标题</th>\n" +
             "                                    <th>商品价格</th>\n" +
             "                                    <th>商品图片</th>\n" +
-            "                                    <th>评价人数</th>\n" +
-            "                                    <th>好评率</th>\n" +
             "                                    <th>详情</th>\n" +
             "                                </tr>")
 
@@ -235,11 +248,9 @@
                 $('#table').append("                                    <tr>\n" +
                     "                                        <td>"+goodlist[i].code+"</td>\n" +
                     "                                        <td>"+goodlist[i].title+"</td>\n" +
-                    "                                        <td>"+goodlist[i].price+"</td>\n" +
+                    "                                        <td>"+goodlist[i].price.price+"</td>\n" +
                     "                                        <td>"+goodlist[i].image+"</td>\n" +
-                    "                                        <td>"+goodlist[i].number+"</td>\n" +
-                    "                                        <td>"+goodlist[i].goodrate+"</td>\n" +
-                    "                                        <td>"+"<a href=\" " + goodlist[i].url+"\" target=\"_blank\" rel=\"noopener noreferrer\">详情</a>" +"</td>\n" +
+                    "                                        <td>"+"<a href=\" " + goodlist[i].goodurl+"\" target=\"_blank\" rel=\"noopener noreferrer\">详情</a>" +"</td>\n" +
                     "                                    </tr>")
                 }
             }
@@ -249,11 +260,9 @@
                 $('#table').append("                                    <tr>\n" +
                     "                                        <td>"+goodlist[i].code+"</td>\n" +
                     "                                        <td>"+goodlist[i].title+"</td>\n" +
-                    "                                        <td>"+goodlist[i].price+"</td>\n" +
+                    "                                        <td>"+goodlist[i].price.price+"</td>\n" +
                     "                                        <td>"+goodlist[i].image+"</td>\n" +
-                    "                                        <td>"+goodlist[i].number+"</td>\n" +
-                    "                                        <td>"+goodlist[i].goodrate+"</td>\n" +
-                    "                                        <td>"+"<a href=\" " + goodlist[i].url+"\" target=\"_blank\" rel=\"noopener noreferrer\">详情</a>" +"</td>\n" +
+                    "                                        <td>"+"<a href=\" " + goodlist[i].goodurl+"\" target=\"_blank\" rel=\"noopener noreferrer\">详情</a>" +"</td>\n" +
                     "                                    </tr>")
             }
         }

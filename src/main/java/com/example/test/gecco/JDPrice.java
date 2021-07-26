@@ -3,6 +3,13 @@ package com.example.test.gecco;
 import com.geccocrawler.gecco.annotation.JSONPath;
 import com.geccocrawler.gecco.spider.JsonBean;
 
+/**
+ * @Description:
+ * 对返回价格的json格式进行解析
+ * @Author: cym
+ * @Time: 2021/7/22 15:22
+ */
+
 public class JDPrice implements JsonBean {
 
     private static final long serialVersionUID = -5696033709028657709L;

@@ -14,10 +14,12 @@ public class JDComment implements JsonBean {
 
     private static final long serialVersionUID = 5656399878723726198L;
 
+/*
     @JSONPath("$.CommentsCount")
     private List<JSONObject> number;
 
     @JSONPath("$.CommentsCount.GoodRateShow")
     private String goodrate;
+*/
 
 }

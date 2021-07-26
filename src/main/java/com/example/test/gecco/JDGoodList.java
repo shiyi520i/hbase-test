@@ -6,10 +6,6 @@ import com.geccocrawler.gecco.spider.HtmlBean;
 import lombok.Data;
 
 
-/*
-* @date ${date}
-*
-* */
 @Data
 @Gecco(matchUrl="https://item.jd.com/{code}.html", pipelines={"consolePipeline","jdgoodlistpip"})
 public class JDGoodList implements HtmlBean {
@@ -69,5 +65,7 @@ public class JDGoodList implements HtmlBean {
     @Ajax(url="https://club.jd.com/comment/productCommentSummaries.action?referenceIds=[code]")
     //@Ajax(url="https://club.jd.com/comment/skuProductPageComments.action?productId={code}&score=0&sortType=5&page=0&pageSize=1&isShadowSku=0&fold=1")
     private JDComment comment;
+
+    private String goodurl;
 
 }

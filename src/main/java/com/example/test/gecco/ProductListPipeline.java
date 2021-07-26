@@ -2,6 +2,7 @@ package com.example.test.gecco;
 
 
 
+import com.example.test.server.OptData;
 import org.apache.commons.lang3.StringUtils;
 
 import com.geccocrawler.gecco.annotation.PipelineName;
@@ -15,6 +16,9 @@ public class ProductListPipeline implements Pipeline<ProductDetail> {
     public void process(ProductDetail productDetail) {
         //输出爬取到的商品列表总个数
         System.out.println(productDetail.getDetailUrl().size());
+        System.out.println(productDetail.getCodeList().size());
+        System.out.println(productDetail.getKeyword());
+        new OptData().cPutData(productDetail,productDetail.getKeyword());
         HttpRequest currRequest = productDetail.getRequest();
         //输出当前页
         System.out.println(productDetail.getCurrPage());

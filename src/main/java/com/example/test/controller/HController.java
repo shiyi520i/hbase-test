@@ -5,10 +5,7 @@ import com.example.test.gecco.JDGoodList;
 import com.example.test.server.OptData;
 import com.example.test.utils.HBaseTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,6 +15,8 @@ public class HController {
     @Autowired
     private HBaseTemplate hBaseTemplate;
     private OptData optData;
+    private static int length;
+
 
     //get数据
     @GetMapping("/getByName")
@@ -57,5 +56,23 @@ public class HController {
          return goodLists;
     }
 
+    //测试数据
+    @GetMapping("/getKeyData/{keyword}")
+    public List<JDGoodList> test1(@PathVariable("keyword") String keyword,
+                                  @RequestParam("pageNum") Integer pageNum,
+                                  @RequestParam("pageSize") Integer pageSize) throws IOException {
+        long start = System.currentTimeMillis();
+        optData=new OptData();
+        List<JDGoodList> goodLists = optData.keyGetData(keyword,pageNum,pageSize);
+        length=optData.getLength();
+        System.out.println("耗时："+(System.currentTimeMillis()-start)+"ms");
+        return goodLists;
+    }
+
+    @RequestMapping("/getLenth")
+    public int getLenth(){
+        System.out.println(HController.length);
+        return HController.length;
+    }
 }
 

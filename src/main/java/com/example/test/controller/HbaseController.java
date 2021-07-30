@@ -27,7 +27,7 @@ public class HbaseController {
     @GetMapping("/seachByName")
     public void geccodata(@RequestParam("key") String key) {
         System.out.println("=======start========");
-        String surl="https://search.jd.com/Search?keyword="+key+"&page=1";
+        String surl="https://search.jd.com/Search?keyword="+key+"&page=3";
         HttpGetRequest startUrl = new HttpGetRequest(surl);
         startUrl.setCharset("GBK");
         GeccoEngine.create()

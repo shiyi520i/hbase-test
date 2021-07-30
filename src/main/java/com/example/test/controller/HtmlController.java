@@ -17,6 +17,6 @@ public class HtmlController {
     }
     @RequestMapping("/vue1")
     public String gettt(){
-        return "vue";
+        return "test5";
     }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:text-align="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" >
 
 <head>
     <meta charset="utf-8"/>
@@ -95,7 +95,7 @@
                             </div>
                             <!--价格 v-if="result.price.price!==null"-->
                             <p class="productPrice">
-                                <em>{{result.deptno}}</em>
+                                <em>{{result.price.price}}</em>
                             </p>
                             <!--标题-->
                             <p class="productTitle">
@@ -135,22 +135,28 @@
         data: { //函数对象：用来接收数据(数据承载模型)
             results: [],
             pageNum: 1, //设置首页页码
-            pageSize: 10,  //设置一页显示的条数
+            pageSize: 20,  //设置一页显示的条数
             total: 0,    //总条数
             pages: 1, //一共多少页
             keyword:""
         },
         methods: {
-            getData: function () {
-                axios.get('a', {
+            searchKey: function () {
+                if("" == this.keyword) {
+                    var keyword = "一加";
+                }
+                else {
+                    var keyword = this.keyword;
+                }
+                axios.get("/getKeyData/"+keyword, {
                     params: {
                         pageNum: this.pageNum,
                         pageSize: this.pageSize
                     }
                 }).then(res => {
                     this.results = res.data;//res.data.records;
-                    this.total =  34;//设置总条数res.data.total;
                     this.pages = 3;//res.data.pages;
+                    this.total = res.data[1].length;//设置总条数res.data.total;
                     console.info(res);
                     if (this.pageNum == 1) {
                         this.showPage();
@@ -158,6 +164,12 @@
                 }).catch(error => {
                     console.log(error);
                 });
+/*                axios.get("/getLenth").then(reu => {
+
+                    console.info(reu);
+                }).catch(error => {
+                    console.log(error);
+                });*/
             },
             showPage: function () {
                 layui.use('laypage', function () {
@@ -183,7 +195,7 @@
                             vm.pageSize = obj.limit;
                             //首次不执行，一定要加此判断，否则初始时会无限刷新
                             if (!first) {
-                                vm.getData();  //加载数据
+                                vm.searchKey();  //加载数据
                             }
                         }
                     });
@@ -191,7 +203,7 @@
             }
         },
         created: function () {
-            this.getData();
+            this.searchKey();
         }
     });
 </script>

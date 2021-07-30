@@ -12,12 +12,14 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class OptData {
 
      //引入hbaseTemplate模板
      private static HBaseTemplate hBaseTemplate =(HBaseTemplate) ApplicationContextHelperUtil.getBean(HBaseTemplate.class);
+     private  int length;
 
      /**
       * @Description:
@@ -72,6 +74,7 @@ public class OptData {
         List<JDGoodList> jps = new ArrayList<>();
         String  goodlist = hBaseTemplate.keyRowData("jdgoodlist", key);
         String[] strArr = goodlist.split(", ");
+        System.out.println(strArr.length);
         for (String s : strArr) {
             JDGoodList goodlist1 = hBaseTemplate.getOneData("jdgoodlist", s,key);
             if(ObjectUtils.isNotEmpty(goodlist1)) {
@@ -82,6 +85,50 @@ public class OptData {
         return jps;
 
     }
+
+    /**
+     *返回指定页数的数据
+     * @Time: 2021/7/30 14:55
+     * @param key          搜索框中的关键字
+     * @param pageNum      当前页数
+     * @param pageSize     单页表长度
+     * @Return: java.util.List<com.example.test.gecco.JDGoodList>
+     */
+    public List<JDGoodList>  keyGetData(String key,Integer pageNum,Integer pageSize) throws IOException {
+        List<JDGoodList> jps = new ArrayList<>();
+        String  goodlist = hBaseTemplate.keyRowData("jdgoodlist", key);
+        String[] strArr = goodlist.split(", ");
+        length=strArr.length;
+        int oldto = (pageNum-1)*pageSize;
+        int newto = pageNum*pageSize;
+        if(length<newto){
+            newto=length;
+        }
+        String[] newArr = Arrays.copyOfRange(strArr, oldto, newto);
+     //   System.out.println(strArr.length);
+        for (String s : newArr) {
+            JDGoodList goodlist1 = hBaseTemplate.getOneData("jdgoodlist", s,key);
+            goodlist1.setLength(length);
+            if(ObjectUtils.isNotEmpty(goodlist1)) {
+                jps.add(goodlist1);
+            }
+        }
+        System.out.println(jps.size());
+        return jps;
+    }
+
+    /**
+     *  获取总长度
+     * @Time: 2021/7/30 14:56
+     * @param
+     * @Return: int
+     */
+    public int getLength(){
+        return length;
+
+    }
+
+
 
 }
 

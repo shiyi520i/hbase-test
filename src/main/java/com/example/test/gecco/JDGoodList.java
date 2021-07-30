@@ -68,4 +68,6 @@ public class JDGoodList implements HtmlBean {
 
     private String goodurl;
 
+    private int length;
+
 }

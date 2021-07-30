@@ -11,8 +11,12 @@ public class HtmlController {
     public String getini(){
           return "index";
       }
-    @RequestMapping("/test")
+    @RequestMapping("/vue")
     public String gett(){
-        return "test";
+        return "index-vue";
+    }
+    @RequestMapping("/vue1")
+    public String gettt(){
+        return "vue";
     }
 }

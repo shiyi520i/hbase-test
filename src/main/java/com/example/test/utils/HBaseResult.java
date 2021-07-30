@@ -68,7 +68,6 @@ public class HBaseResult {
         return hBaseBeans;
     }
 
-
     /**
      * 获取单行结果
      * @return
@@ -94,5 +93,19 @@ public class HBaseResult {
             scan.withStopRow(Bytes.toBytes(stopRow));
         }
     }
+
+    public static String trimFirstAndLastChar(String str, String element) {
+        boolean beginIndexFlag = true;
+        boolean endIndexFlag = true;
+        do {
+            int beginIndex = str.indexOf(element) == 0 ? 1 : 0;
+            int endIndex = str.lastIndexOf(element) + 1 == str.length() ? str.lastIndexOf(element) : str.length();
+            str = str.substring(beginIndex, endIndex);
+            beginIndexFlag = (str.indexOf(element) == 0);
+            endIndexFlag = (str.lastIndexOf(element) + 1 == str.length());
+        } while (beginIndexFlag || endIndexFlag);
+        return str;
+    }
+
 }
 

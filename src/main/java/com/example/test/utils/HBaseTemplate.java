@@ -4,6 +4,7 @@ package com.example.test.utils;
 import com.example.test.gecco.JDGoodList;
 import com.example.test.gecco.JDPrice;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.NamespaceDescriptor;
@@ -72,29 +73,21 @@ public class HBaseTemplate {
      * @param key
      * @Return: java.util.List<ProductDetail>
      */
-    public  List<JDGoodList> scanDataByKey(String key) throws IOException {
+    public  List<JDGoodList> scanDataByKey(String tab,String key) throws IOException {
         //电影列表
         List<JDGoodList> jps = new ArrayList<>();
         //获取表
-        Table table = connection.getTable(TableName.valueOf("movie"));
+        Table table = getTable(tab);
         //获取scan,可使用过滤器
         Scan scan = new Scan();
         String regex = ".*"+key+".*";
         RegexStringComparator comp = new RegexStringComparator(regex);
         List<Filter> listFilter = new ArrayList<Filter>();
         SingleColumnValueFilter filter0 = new SingleColumnValueFilter(Bytes.toBytes("1"), Bytes.toBytes("title"), CompareFilter.CompareOp.EQUAL, comp);
-        SingleColumnValueFilter filter1 = new SingleColumnValueFilter(Bytes.toBytes("1"), Bytes.toBytes("director"), CompareFilter.CompareOp.EQUAL, comp);
-        SingleColumnValueFilter filter2 = new SingleColumnValueFilter(Bytes.toBytes("1"), Bytes.toBytes("score"), CompareFilter.CompareOp.EQUAL, comp);
-        SingleColumnValueFilter filter3 = new SingleColumnValueFilter(Bytes.toBytes("1"), Bytes.toBytes("type"), CompareFilter.CompareOp.EQUAL, comp);
-        SingleColumnValueFilter filter4 = new SingleColumnValueFilter(Bytes.toBytes("1"), Bytes.toBytes("writer"), CompareFilter.CompareOp.EQUAL, comp);
-        SingleColumnValueFilter filter5 = new SingleColumnValueFilter(Bytes.toBytes("1"), Bytes.toBytes("number"), CompareFilter.CompareOp.EQUAL, comp);
+        SingleColumnValueFilter filter2 = new SingleColumnValueFilter(Bytes.toBytes("1"), Bytes.toBytes("detail"), CompareFilter.CompareOp.EQUAL, comp);
         //filter.setFilterIfMissing(true);如果为true，当这一列不存在时，不会返回，如果为false，当这一列不存在时，会返回所有的列信息。
         listFilter.add(filter0);
-        listFilter.add(filter1);
         listFilter.add(filter2);
-        listFilter.add(filter3);
-        listFilter.add(filter4);
-        listFilter.add(filter5);
         //“AND”还是“OR”通过``FilterList.Operator.MUST_PASS_ONE来指定，如果是MUST_PASS_ONR，则是“OR”的关系，如果是MUST_PASS_ALL`，则是“AND”的关系，如果不传入这个参数，则默认为“AND”的关系。
         Filter filter = new FilterList(FilterList.Operator.MUST_PASS_ONE, listFilter);
         scan.setFilter(filter);
@@ -106,15 +99,15 @@ public class HBaseTemplate {
             JDGoodList jdGoodList = new JDGoodList();
             JDPrice jp=new JDPrice();
             jdGoodList.setCode(Bytes.toString(CellUtil.cloneValue(result.rawCells()[0])));
-            jdGoodList.setTitle(Bytes.toString(CellUtil.cloneValue(result.rawCells()[1])));
+            jdGoodList.setTitle(Bytes.toString(CellUtil.cloneValue(result.rawCells()[4])));
             jp.setPrice(Bytes.toString(CellUtil.cloneValue(result.rawCells()[2])));
+            jdGoodList.setDetail(Bytes.toString(CellUtil.cloneValue(result.rawCells()[3])));
             jdGoodList.setPrice(jp);
-            jdGoodList.setImage(Bytes.toString(CellUtil.cloneValue(result.rawCells()[3])));
+            jdGoodList.setImage(Bytes.toString(CellUtil.cloneValue(result.rawCells()[1])));
             jdGoodList.setGoodurl("https://item.jd.com/"+Bytes.toString(CellUtil.cloneValue(result.rawCells()[0]))+".html");
             jps.add(jdGoodList);
 
         }
-
 
         return jps;
     }
@@ -128,24 +121,28 @@ public class HBaseTemplate {
      * @param rowKey
      * @Return: com.example.test.gecco.JDGoodList
      */
-
-    public  JDGoodList getOneData(String tab,String rowKey) throws IOException {
+    public  JDGoodList getOneData(String tab,String rowKey,String keyword) throws IOException {
         JDGoodList jdGoodList = new JDGoodList();
+        JDPrice jp=new JDPrice();
         //获取表
-        Table table = connection.getTable(TableName.valueOf(tab));
+        Table table = getTable(tab);
         //设置需要获取的rowkey
         Get get = new Get(Bytes.toBytes(rowKey));
+        //获取列族为1的数据
+        get.addFamily(Bytes.toBytes("1"));
         //获取一行数据
         Result result = table.get(get);
-        JDPrice jp=new JDPrice();
-        jdGoodList.setCode(Bytes.toString(CellUtil.cloneValue(result.rawCells()[0])));
-        jdGoodList.setTitle(Bytes.toString(CellUtil.cloneValue(result.rawCells()[1])));
-        jp.setPrice(Bytes.toString(CellUtil.cloneValue(result.rawCells()[2])));
-        jdGoodList.setPrice(jp);
-        jdGoodList.setImage(Bytes.toString(CellUtil.cloneValue(result.rawCells()[3])));
-        jdGoodList.setGoodurl("https://item.jd.com/"+Bytes.toString(CellUtil.cloneValue(result.rawCells()[0]))+".html");
-
-        return jdGoodList;
+        if( !result.isEmpty()) {
+            jdGoodList.setCode(Bytes.toString(CellUtil.cloneValue(result.rawCells()[0])));
+            jdGoodList.setTitle(StringUtils.replaceOnce(Bytes.toString(CellUtil.cloneValue(result.rawCells()[4])),keyword,"<span style='color:red'>"+keyword+"</span>"));
+            jp.setPrice(Bytes.toString(CellUtil.cloneValue(result.rawCells()[2])));
+            jdGoodList.setDetail(Bytes.toString(CellUtil.cloneValue(result.rawCells()[3])));
+            jdGoodList.setPrice(jp);
+            jdGoodList.setImage(Bytes.toString(CellUtil.cloneValue(result.rawCells()[1])));
+            jdGoodList.setGoodurl("https://item.jd.com/" + Bytes.toString(CellUtil.cloneValue(result.rawCells()[0])) + ".html");
+            return jdGoodList;
+        }
+        return null;
     }
 
     /**
@@ -160,13 +157,10 @@ public class HBaseTemplate {
         //商品列表
         List<JDGoodList> jps = new ArrayList<>();
         //获取表
-        Table table = connection.getTable(TableName.valueOf(tab));
+        Table table = getTable(tab);
         //获取scan,可使用过滤器
-     /* Scan scan = new Scan();
-       RegexStringComparator comp = new RegexStringComparator("you."); // 以 you 开头的字符串
-       SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("family"), Bytes.toBytes("qualifier"), CompareOp.EQUAL, comp);
-       scan.setFilter(filter);*/
         Scan scan = new Scan();
+        scan.addFamily(Bytes.toBytes("1"));
         //扫描全表
         ResultScanner scanner = table.getScanner(scan);
         //解析scanner
@@ -175,7 +169,36 @@ public class HBaseTemplate {
             JDGoodList jdGoodList = new JDGoodList();
             JDPrice jp=new JDPrice();
             jdGoodList.setCode(Bytes.toString(CellUtil.cloneValue(result.rawCells()[0])));
-            jdGoodList.setTitle(Bytes.toString(CellUtil.cloneValue(result.rawCells()[3])));
+            jdGoodList.setTitle(Bytes.toString(CellUtil.cloneValue(result.rawCells()[4])));
+            jp.setPrice(Bytes.toString(CellUtil.cloneValue(result.rawCells()[2])));
+            jdGoodList.setDetail(Bytes.toString(CellUtil.cloneValue(result.rawCells()[3])));
+            jdGoodList.setPrice(jp);
+            jdGoodList.setImage(Bytes.toString(CellUtil.cloneValue(result.rawCells()[1])));
+            jdGoodList.setGoodurl("https://item.jd.com/"+Bytes.toString(CellUtil.cloneValue(result.rawCells()[0]))+".html");
+            jps.add(jdGoodList);
+
+        }
+        return jps;
+    }
+
+    public  List<JDGoodList> seachHighlightData(String tab,String keyword) throws IOException {
+        //商品列表
+        List<JDGoodList> jps = new ArrayList<>();
+        //获取表
+        Table table = getTable(tab);
+        //获取scan,可使用过滤器
+        Scan scan = new Scan();
+        scan.addFamily(Bytes.toBytes("1"));
+        //扫描全表
+        ResultScanner scanner = table.getScanner(scan);
+        //解析scanner
+        for (Result result : scanner) {
+            //获得实体
+            JDGoodList jdGoodList = new JDGoodList();
+            JDPrice jp=new JDPrice();
+            jdGoodList.setCode(Bytes.toString(CellUtil.cloneValue(result.rawCells()[0])));
+            jdGoodList.setDetail(Bytes.toString(CellUtil.cloneValue(result.rawCells()[3])));
+            jdGoodList.setTitle(StringUtils.replaceOnce(Bytes.toString(CellUtil.cloneValue(result.rawCells()[4])),keyword,"<span style='color:red'>"+keyword+"</span>"));
             jp.setPrice(Bytes.toString(CellUtil.cloneValue(result.rawCells()[2])));
             jdGoodList.setPrice(jp);
             jdGoodList.setImage(Bytes.toString(CellUtil.cloneValue(result.rawCells()[1])));
@@ -334,6 +357,22 @@ public class HBaseTemplate {
     }
 
     /**
+     *
+     * @Time: 2021/7/29 11:15
+     * @param tableName  表名字
+     * @param append     追加的数据
+     * @Return: void
+     */
+    public void appendRowData(String tableName, Append append) {
+        Assert.hasLength(tableName, "表名不能为空");
+        try (Table table = getTable(tableName)) {
+            table.append(append);
+        } catch (IOException e) {
+            //  log.error("添加数据失败");
+        }
+    }
+
+    /**
      * 向表中添加数据
      *
      * @param tableName
@@ -404,7 +443,7 @@ public class HBaseTemplate {
         Assert.hasLength(tableName, "表名不能为空");
         Assert.hasLength(rowKey, "rowKey 不能为空");
         Get get = new Get(Bytes.toBytes(rowKey));
-        get.addColumn(Bytes.toBytes("1"), Bytes.toBytes("codelist"));
+        get.addColumn(Bytes.toBytes("2"), Bytes.toBytes("codelist"));
         try (Table table = getTable(tableName);) {
             Result result = table.get(get);
             for (Cell cell : result.rawCells()) {
@@ -502,7 +541,6 @@ public class HBaseTemplate {
         }
         return result;
     }
-
 
 }
 

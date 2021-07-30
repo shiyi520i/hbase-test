@@ -23,8 +23,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="text-lg-center dataTables_filter" id="dataTable_filter"><label><input id="name" type="search" name="name" class="form-control" aria-controls="dataTable" placeholder="商品名称/导演/编剧"></label><button id="findByName" type="button" class="btn btn-primary">查询</button></div>
-                                <div class="text-lg-center dataTables_filter" id="dataTable_filter1"><label><input id="seachname" type="search" name="name" class="form-control" aria-controls="dataTable" placeholder="商品名称"></label><button id="seachByName" type="button" class="btn btn-primary">搜索</button></div>
+                                <div class="text-lg-center dataTables_filter" id="dataTable_filter"><label><input id="name" type="search" name="name" class="form-control" aria-controls="dataTable" placeholder="商品名称"></label>&nbsp;&nbsp;<button id="findByName" type="button" class="btn btn-primary">查询</button>&nbsp;&nbsp;<button id="seachByName" type="button" class="btn btn-primary">搜索</button>&nbsp;&nbsp;<button id="fuzzysearch" type="button" class="btn btn-primary">模糊</button></div>
                             </div>
                         </div>
 
@@ -188,7 +187,7 @@
 
         //爬取数据
         $('#seachByName').on('click',function () {
-            var key = $('#seachname').val()
+            var key = $('#name').val()
             if (key===""){
                 alert("不能为空！")
                 return ;

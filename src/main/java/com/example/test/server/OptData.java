@@ -1,9 +1,12 @@
 package com.example.test.server;
 
 import com.example.test.gecco.JDGoodList;
+import com.example.test.gecco.JDPrice;
 import com.example.test.gecco.ProductDetail;
 import com.example.test.utils.ApplicationContextHelperUtil;
+import com.example.test.utils.HBaseResult;
 import com.example.test.utils.HBaseTemplate;
+import com.example.test.utils.ObjectUtils;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -34,12 +37,15 @@ public class OptData {
         put.addColumn(Bytes.toBytes("1"), Bytes.toBytes("titel"), Bytes.toBytes(jdGoodList.getComment().getGoodrate()));*/
         put.addColumn(Bytes.toBytes("1"), Bytes.toBytes("price"), Bytes.toBytes(jdGoodList.getPrice().getPrice()));
         put.addColumn(Bytes.toBytes("1"), Bytes.toBytes("image"), Bytes.toBytes(jdGoodList.getImage()));
+        put.addColumn(Bytes.toBytes("1"), Bytes.toBytes("shop"), Bytes.toBytes(jdGoodList.getDetail()));
+
         hBaseTemplate.putRowData("jdgoodlist",put);
 
     }
 
     /**
      * @Description:
+     * 存储商品代码列表
      * @Time: 2021/7/26 14:40
      * @param productDetail
      * @param keyword
@@ -47,22 +53,32 @@ public class OptData {
      */
 
     public  void cPutData(ProductDetail productDetail,String keyword){
-        //rowkey
-        Put put = new Put(Bytes.toBytes(keyword));
-        //列族，列，值
-        put.addColumn(Bytes.toBytes("1"), Bytes.toBytes("codelist"), Bytes.toBytes(productDetail.getCodeList().toString()));
-        hBaseTemplate.putRowData("jdgoodlist",put);
-
+        Append append = new Append(Bytes.toBytes(keyword));
+        //去除多余字符串
+        String newvalue= HBaseResult.trimFirstAndLastChar(HBaseResult.trimFirstAndLastChar(productDetail.getCodeList().toString(),"]"),"[");
+        append.addColumn(Bytes.toBytes("2"), Bytes.toBytes("codelist"), Bytes.toBytes(newvalue));
+        hBaseTemplate.appendRowData("jdgoodlist",append);
     }
+
+    /**
+     * @Description:
+     * 分词进行倒排索引
+     * @Time: 2021/7/28 10:58
+     * @param key
+     * @Return: java.util.List<com.example.test.gecco.JDGoodList>
+     */
 
     public List<JDGoodList>  kGetData(String key) throws IOException {
         List<JDGoodList> jps = new ArrayList<>();
         String  goodlist = hBaseTemplate.keyRowData("jdgoodlist", key);
-        String[] strArr = goodlist.split(" ");
+        String[] strArr = goodlist.split(", ");
         for (String s : strArr) {
-            JDGoodList goodlist1 = hBaseTemplate.getOneData("jdgoodlist", s);
-            jps.add(goodlist1);
+            JDGoodList goodlist1 = hBaseTemplate.getOneData("jdgoodlist", s,key);
+            if(ObjectUtils.isNotEmpty(goodlist1)) {
+                jps.add(goodlist1);
+            }
         }
+        System.out.println(jps.size());
         return jps;
 
     }

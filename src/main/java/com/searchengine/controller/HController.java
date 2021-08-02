@@ -1,9 +1,9 @@
-package com.example.test.controller;
+package com.searchengine.controller;
 
 
-import com.example.test.gecco.JDGoodList;
-import com.example.test.server.OptData;
-import com.example.test.utils.HBaseTemplate;
+import com.searchengine.gecco.JDGoodList;
+import com.searchengine.server.OptData;
+import com.searchengine.utils.HBaseTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

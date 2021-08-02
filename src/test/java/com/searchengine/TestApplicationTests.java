@@ -1,8 +1,6 @@
-package com.example.test;
+package com.searchengine;
 
-import com.example.test.utils.HBaseTemplate;
-import com.geccocrawler.gecco.GeccoEngine;
-import com.geccocrawler.gecco.request.HttpGetRequest;
+import com.searchengine.utils.HBaseTemplate;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.jupiter.api.Test;

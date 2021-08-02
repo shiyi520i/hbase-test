@@ -1,4 +1,4 @@
-package com.example.test.utils;
+package com.searchengine.utils;
 
 
 import java.lang.reflect.Array;

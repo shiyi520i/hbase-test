@@ -1,4 +1,4 @@
-package com.example.test.utils;
+package com.searchengine.utils;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

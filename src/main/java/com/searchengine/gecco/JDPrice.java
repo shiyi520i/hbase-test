@@ -1,4 +1,4 @@
-package com.example.test.gecco;
+package com.searchengine.gecco;
 
 import com.geccocrawler.gecco.annotation.JSONPath;
 import com.geccocrawler.gecco.spider.JsonBean;

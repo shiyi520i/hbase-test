@@ -1,8 +1,8 @@
-package com.example.test.gecco;
+package com.searchengine.gecco;
 
 
 
-import com.example.test.server.OptData;
+import com.searchengine.server.OptData;
 import org.apache.commons.lang3.StringUtils;
 
 import com.geccocrawler.gecco.annotation.PipelineName;

@@ -1,4 +1,4 @@
-package com.example.test.controller;
+package com.searchengine.controller;
 
 
 import org.springframework.stereotype.Controller;

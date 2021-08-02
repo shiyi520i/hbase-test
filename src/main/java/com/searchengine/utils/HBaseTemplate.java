@@ -1,8 +1,8 @@
-package com.example.test.utils;
+package com.searchengine.utils;
 
 
-import com.example.test.gecco.JDGoodList;
-import com.example.test.gecco.JDPrice;
+import com.searchengine.gecco.JDGoodList;
+import com.searchengine.gecco.JDPrice;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hbase.Cell;

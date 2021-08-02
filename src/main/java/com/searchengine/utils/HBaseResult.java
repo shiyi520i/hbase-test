@@ -1,6 +1,6 @@
-package com.example.test.utils;
+package com.searchengine.utils;
 
-import com.example.test.gecco.JDGoodList;
+import com.searchengine.gecco.JDGoodList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.Cell;

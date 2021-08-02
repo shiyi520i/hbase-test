@@ -1,6 +1,6 @@
-package com.example.test.config;
+package com.searchengine.config;
 
-import com.example.test.utils.HBaseTemplate;
+import com.searchengine.utils.HBaseTemplate;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Connection;
@@ -13,7 +13,7 @@ import java.io.IOException;
 //hbase配置
 public class HbaseConfig {
     @Bean
-    public  HBaseTemplate configuration() throws IOException {
+    public HBaseTemplate configuration() throws IOException {
         Configuration conf = HBaseConfiguration.create();
           //zk入口ip
           conf.set("hbase.zookeeper.quorum", "192.168.10.100");

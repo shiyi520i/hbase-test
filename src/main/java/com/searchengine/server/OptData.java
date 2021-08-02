@@ -1,11 +1,11 @@
-package com.example.test.server;
+package com.searchengine.server;
 
-import com.example.test.gecco.JDGoodList;
-import com.example.test.gecco.ProductDetail;
-import com.example.test.utils.ApplicationContextHelperUtil;
-import com.example.test.utils.HBaseResult;
-import com.example.test.utils.HBaseTemplate;
-import com.example.test.utils.ObjectUtils;
+import com.searchengine.gecco.JDGoodList;
+import com.searchengine.gecco.ProductDetail;
+import com.searchengine.utils.ApplicationContextHelperUtil;
+import com.searchengine.utils.HBaseResult;
+import com.searchengine.utils.HBaseTemplate;
+import com.searchengine.utils.ObjectUtils;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -53,7 +53,7 @@ public class OptData {
      * @Return: void
      */
 
-    public  void cPutData(ProductDetail productDetail,String keyword){
+    public  void cPutData(ProductDetail productDetail, String keyword){
         Append append = new Append(Bytes.toBytes(keyword));
         //去除多余字符串
         String newvalue= HBaseResult.trimFirstAndLastChar(HBaseResult.trimFirstAndLastChar(productDetail.getCodeList().toString(),"]"),"[");

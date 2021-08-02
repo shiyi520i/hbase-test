@@ -1,4 +1,4 @@
-package com.example.test.gecco;
+package com.searchengine.gecco;
 
 import com.alibaba.fastjson.JSONObject;
 import com.geccocrawler.gecco.annotation.JSONPath;

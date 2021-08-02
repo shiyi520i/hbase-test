@@ -1,8 +1,7 @@
-package com.example.test.controller;
+package com.searchengine.controller;
 
 
-
-import com.example.test.utils.HBaseTemplate;
+import com.searchengine.utils.HBaseTemplate;
 import com.geccocrawler.gecco.GeccoEngine;
 import com.geccocrawler.gecco.request.HttpGetRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ public class HbaseController {
         startUrl.setCharset("GBK");
         GeccoEngine.create()
                 //Gecco搜索的包路径
-                .classpath("com/example/test/gecco")
+                .classpath("com/searchengine/gecco")
                 //开始抓取的页面地址
                 .start(startUrl)
                 //开启几个爬虫线程

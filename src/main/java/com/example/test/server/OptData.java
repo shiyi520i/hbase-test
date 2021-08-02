@@ -1,7 +1,6 @@
 package com.example.test.server;
 
 import com.example.test.gecco.JDGoodList;
-import com.example.test.gecco.JDPrice;
 import com.example.test.gecco.ProductDetail;
 import com.example.test.utils.ApplicationContextHelperUtil;
 import com.example.test.utils.HBaseResult;
@@ -105,7 +104,6 @@ public class OptData {
             newto=length;
         }
         String[] newArr = Arrays.copyOfRange(strArr, oldto, newto);
-     //   System.out.println(strArr.length);
         for (String s : newArr) {
             JDGoodList goodlist1 = hBaseTemplate.getOneData("jdgoodlist", s,key);
             goodlist1.setLength(length);
@@ -116,19 +114,6 @@ public class OptData {
         System.out.println(jps.size());
         return jps;
     }
-
-    /**
-     *  获取总长度
-     * @Time: 2021/7/30 14:56
-     * @param
-     * @Return: int
-     */
-    public int getLength(){
-        return length;
-
-    }
-
-
 
 }
 

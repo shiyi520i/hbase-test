@@ -68,11 +68,5 @@ public class HController {
         System.out.println("耗时："+(System.currentTimeMillis()-start)+"ms");
         return goodLists;
     }
-
-    @RequestMapping("/getLenth")
-    public int getLenth(){
-        System.out.println(HController.length);
-        return HController.length;
-    }
 }
 
